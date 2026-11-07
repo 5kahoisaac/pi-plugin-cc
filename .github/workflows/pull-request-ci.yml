@@ -1,0 +1,49 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Pinned so a new validator release cannot change the result of an unchanged PR.
+      # `claude plugin validate` needs no sign-in. Strict mode accepts plugin.json's `icon`
+      # from Claude Code 2.1.281.
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code@2.1.319
+
+      - name: Validate plugin
+        run: claude plugin validate --strict ./plugins/pi
+
+      - name: Validate marketplace
+        run: claude plugin validate --strict .
+
+      - name: Syntax-check scripts
+        run: |
+          for f in scripts/*.mjs plugins/pi/scripts/*.mjs plugins/pi/scripts/lib/*.mjs; do
+            node --check "$f"
+          done
+
+      # Includes the release-metadata, dependency, license, and JSON guards in
+      # tests/commands.test.mjs and tests/bump-version.test.mjs.
+      - name: Run test suite
+        run: npm test
