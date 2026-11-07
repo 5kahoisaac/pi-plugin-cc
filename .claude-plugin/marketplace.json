@@ -1,0 +1,25 @@
+{
+  "name": "5kahoisaac-pi",
+  "owner": {
+    "name": "5kahoisaac",
+    "email": "me@isaac.ng",
+    "url": "https://github.com/5kahoisaac"
+  },
+  "metadata": {
+    "description": "Pi plugins to use in Claude Code for delegation and code review.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "pi",
+      "description": "Use Pi from Claude Code to review code or delegate tasks.",
+      "version": "0.1.0",
+      "author": {
+        "name": "5kahoisaac",
+        "email": "me@isaac.ng",
+        "url": "https://github.com/5kahoisaac"
+      },
+      "source": "./plugins/pi"
+    }
+  ]
+}
